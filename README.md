@@ -10,7 +10,7 @@ lua UDPソケットを通して DCSからシミュレーション情報を受け
     - [ダウンロード](#ダウンロード)
     - [バージョンアップ](#バージョンアップ)
     - [初期設定](#初期設定)
-    - [Video Walkthrough](#video-walkthrough)
+    - [ビデオ映像による説明](#ビデオ映像による説明)
 - [ソースコード](#ソースコード)
 - [Build from source instructions](#build-from-source-instructions)
 
@@ -48,23 +48,26 @@ lua UDPソケットを通して DCSからシミュレーション情報を受け
 
 - DCS plugin が動作するには、まず始めに [DCS-ExportScripts](https://github.com/s-d-a/DCS-ExportScripts)が必要です。これの操作説明書は [Wiki](https://github.com/s-d-a/DCS-ExportScripts/wiki) にあります。これは DCSゲーム本体と通信するバックエンドプログラムとなります。
 
-- DCS Interface Streamdeck pluginをインストールするには、下記をダウンロードしてインストールする必要があります。 `com.ctytler.dcs.streamDeckPlugin` from [Releases](https://github.com/charlestytler/streamdeck-dcs-interface/releases).
+- DCS Interface Streamdeck pluginをインストールするには、次のファイルをダウンロードしてダブルクリックしインストールする必要があります。 `com.ctytler.dcs.streamDeckPlugin` from [Releases](https://github.com/charlestytler/streamdeck-dcs-interface/releases).
 
-- Also within [Releases](https://github.com/charlestytler/streamdeck-dcs-interface/releases) is an optional `icon_library.zip` you can download for use with Streamdeck Profiles.
+- [Releases](https://github.com/charlestytler/streamdeck-dcs-interface/releases) にある `icon_library.zip` もダウンロードして使用することができます。
+
 
 ### バージョンアップ
 
 もし既に前バージョンがインストールされているときは、新しいバージョンをインストールする前に、古いバージョンをアンインストールしてください。
-その操作は、StreamDeck GUIの右下にある "More Actions..."ボタンをクリックしてから、DCS Interface pluginの "Uninstall" をクリックしてください。
+その操作は、StreamDeck GUIの右下にある "その他のアクション..."ボタンをクリックしてから、DCS Interface pluginの "Uninstall" をクリックしてください。
 
 #### インストール済みバージョン番号の確認方法
 
-StreamDeckにインストールしてあるPluginのバージョン番号の確認方法は、"More Actions..."ボタンをクリックすると、インストール済みPlugin毎に
+StreamDeckにインストールしてあるPluginのバージョン番号の確認方法は、"その他のアクション..."ボタンをクリックします。そこにはインストール済みPlugin毎に
 制作者とバージョン番号がタイトルの下に表示されます。
 
 ### 初期設定
 
-If you plan to only use DCS Interface for Streamdeck with the DCS-ExportScript and not [Ikarus](https://github.com/s-d-a/Ikarus), you can modify the file `DCS-ExportScript\Config.lua` to have the following settings (where `IkarusPort` is changed from `1625` to `1725` for DCS Interface) to get everything connected:
+もし 'DCS Interface'とDCS-ExportScriptだけを使う予定なら([Ikarus](https://github.com/s-d-a/Ikarus)は使わない)
+`DCS-ExportScript\Config.lua`　のファイルを下記のように変更します。
+(`IkarusPort`の所の値を `1625`から`1725`に変えます)。
 
 ```
 -- Ikarus a Glass Cockpit Software
@@ -76,9 +79,9 @@ ExportScript.Config.IkarusSeparator = ":"
 
 The export script is also capable of supporting both, instructions can be found in the [Settings Help Documentation - Enabling Both DCS Interface & Ikarus](Sources/com.ctytler.dcs.sdPlugin/helpDocs/helpContents.md#enabling-both-dcs-interface--ikarus).
 
-### Video Walkthrough
+### ビデオ映像による説明
 
-A walkthrough of installation and configuration can be found at the below link, along with other instructional videos.  
+インストールと設定の概要は下記のリンクでたどることができます。
 [DCS Interface for Streamdeck Video Instructions](https://www.youtube.com/playlist?list=PLcYO7a2ywThz7nIT4CjRTn737ZM26aqDq)
 
 # ソースコード
