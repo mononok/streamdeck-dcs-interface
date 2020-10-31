@@ -1,39 +1,40 @@
 <img src="Images/DCS_Interface_Banner.png" width=400>
 
-`DCS Interface` is a plugin for the Streamdeck that allows communication with DCS via lua UDP sockets for both receiving updates of the simulation state as well as sending commands to interact with the clickable cockpits.
+`DCS Interface` は Streamdeck 用のプラグインです。
+lua UDPソケットを通して DCSからシミュレーション情報を受け取ったり、クリッカブルコックピットにコマンドを送信することができます。
 
-- [Description](#description)
-  - [Detailed Documentation](#detailed-documentation)
-- [Demo of Operation](#demo-of-operation)
-- [Installation](#installation)
-    - [Downloads](#downloads)
-    - [Version Update](#version-update)
-    - [Initial Configuration](#initial-configuration)
+- [概要](#概要)
+  - [ドキュメント詳細](#ドキュメント詳細)
+- [デモ操作](#デモ操作)
+- [インストール方法](#インストール方法)
+    - [ダウンロード](#ダウンロード)
+    - [バージョンアップ](#バージョンアップ)
+    - [初期設定](#初期設定)
     - [Video Walkthrough](#video-walkthrough)
-- [Source code](#source-code)
+- [ソースコード](#ソースコード)
 - [Build from source instructions](#build-from-source-instructions)
 
-# Description
+# 概要
 
-`DCS Interface` is a plugin that allows you to create buttons and interfaces that update with DCS events.
-There are currently three settings for each Streamdeck button you create:
+`DCS Interface` はプラグインです。DCSのイベントを発生させるボタンやインターフェースを作成することができます。
+通常は作成したボタン毎に３つの設定があります。
 
-- DCS Command - Specify which button/switch you want to activate in game (allows setting of any clickable object in a cockpit).
-  - Streamdeck buttons support push-button, switch, and increment (dials, levers, etc.) input types.
-- Image Change Settings - Specify a function within the DCS simulation to monitor and change the display of the Streamdeck image conditionally.
-  - Examples: Lamps for Warnings/Modes, Switch states
-- Title Text Change Settings - Specify a function in the DCS simulation which will be monitored and its text is displayed as the Streamdeck button Title.
-  - Examples: UFC text displays, scratchpads, radio displays
+- DCS コマンド - ゲーム上で動作させたいボタン/スイッチを指定します(コックピット内の操作可能なオブジェクト)。
+  - Streamdeck は、プッシュボタン、スイッチ、ダイアル、レバーなどの入力をサポートします。
+- 画像設定 - DCS内部情報に従って、Streamdeckの画像を条件付き変更する関数を指定します。
+  - 例: 警告灯、スイッチステータス
+- 文字設定 - DCS内部情報に従って、Streamdeckのボタンタイトルを表示する関数を指定します。
+  - 例: UFC文字表示、スクラッチパッド、ラジオ表示
 
-Can also support multiple physical Streamdecks at once.
+複数のStreamdeckも、もちろんサポートします。
 
-## Detailed Documentation
+## ドキュメント詳細
 
-More detailed instructions can be found in: [Settings Help Documentation](Sources/com.ctytler.dcs.sdPlugin/helpDocs/helpContents.md).
+より詳しい取り扱い説明書は下記にあります：[Settings Help Documentation](Sources/com.ctytler.dcs.sdPlugin/helpDocs/helpContents.md).
 
 ---
 
-# Demo of Operation
+# デモ操作
 
 ![Stream Deck AV8BNA ODU Demo](Images/Streamdeck_AV8B_Demo.gif)
 
@@ -41,24 +42,27 @@ More detailed instructions can be found in: [Settings Help Documentation](Source
 
 <img src="Images/Configuration_AV8B_Screenshot.jpg" width=600>
 
-# Installation
+# インストール方法
 
-### Downloads
+### ダウンロード
 
-- For the DCS plugin to work you will first need [DCS-ExportScripts](https://github.com/s-d-a/DCS-ExportScripts) installed, detailed instructions are on their [Wiki](https://github.com/s-d-a/DCS-ExportScripts/wiki). This is the backend that is relied on for communication with the DCS game.
+- DCS plugin が動作するには、まず始めに [DCS-ExportScripts](https://github.com/s-d-a/DCS-ExportScripts)が必要です。これの操作説明書は [Wiki](https://github.com/s-d-a/DCS-ExportScripts/wiki) にあります。これは DCSゲーム本体と通信するバックエンドプログラムとなります。
 
-- To install the DCS Interface Streamdeck plugin, you will need to download and run the installer `com.ctytler.dcs.streamDeckPlugin` from [Releases](https://github.com/charlestytler/streamdeck-dcs-interface/releases).
+- DCS Interface Streamdeck pluginをインストールするには、下記をダウンロードしてインストールする必要があります。 `com.ctytler.dcs.streamDeckPlugin` from [Releases](https://github.com/charlestytler/streamdeck-dcs-interface/releases).
 
 - Also within [Releases](https://github.com/charlestytler/streamdeck-dcs-interface/releases) is an optional `icon_library.zip` you can download for use with Streamdeck Profiles.
 
-### Version Update
+### バージョンアップ
 
-If you have a prior version already installed on your StreamDeck, you will have to uninstall it first before installing the latest version. To do this click the "More Actions..." button at the bottom-right of the StreamDeck GUI and click "Uninstall" next to the DCS Interface plugin.
+もし既に前バージョンがインストールされているときは、新しいバージョンをインストールする前に、古いバージョンをアンインストールしてください。
+その操作は、StreamDeck GUIの右下にある "More Actions..."ボタンをクリックしてから、DCS Interface pluginの "Uninstall" をクリックしてください。
 
-#### Identify installed version number:
-To see the version of the plugin installed on the StreamDeck, click the "More Actions..." button, each installed plugin will have the author and version number printed below its title.
+#### インストール済みバージョン番号の確認方法
 
-### Initial Configuration
+StreamDeckにインストールしてあるPluginのバージョン番号の確認方法は、"More Actions..."ボタンをクリックすると、インストール済みPlugin毎に
+制作者とバージョン番号がタイトルの下に表示されます。
+
+### 初期設定
 
 If you plan to only use DCS Interface for Streamdeck with the DCS-ExportScript and not [Ikarus](https://github.com/s-d-a/Ikarus), you can modify the file `DCS-ExportScript\Config.lua` to have the following settings (where `IkarusPort` is changed from `1625` to `1725` for DCS Interface) to get everything connected:
 
@@ -77,7 +81,7 @@ The export script is also capable of supporting both, instructions can be found 
 A walkthrough of installation and configuration can be found at the below link, along with other instructional videos.  
 [DCS Interface for Streamdeck Video Instructions](https://www.youtube.com/playlist?list=PLcYO7a2ywThz7nIT4CjRTn737ZM26aqDq)
 
-# Source code
+# ソースコード
 
 The Sources folder contains the source code of the plugin. The primary components are as follows:
 
