@@ -63,7 +63,7 @@ DcsSocket::DcsSocket(const std::string &ip_address, const std::string &ip_addres
     if (tx_port != "dynamic") {
         // Define send destination port.
         addrinfo *send_to_port;
-        getaddrinfo(ip_address.c_str(), ip_address_partner.c_str(), tx_port.c_str(), &hints, &send_to_port);
+        getaddrinfo(ip_address_partner.c_str(), tx_port.c_str(), &hints, &send_to_port);
         dest_addr_ = *send_to_port->ai_addr;
         dest_addr_len_ = static_cast<int>(send_to_port->ai_addrlen);
         freeaddrinfo(send_to_port);
