@@ -6,14 +6,15 @@
 #include "StringUtilities.h"
 
 DcsInterface::DcsInterface(const DcsConnectionSettings &settings)
-    : dcs_socket_(settings.ip_address, settings.rx_port, settings.tx_port), connection_settings_(settings) {
+    : dcs_socket_(settings.ip_address, settings.ip_address_partner, settings.rx_port, settings.tx_port), connection_settings_(settings) {
     // Send a reset to request a resend of data in case DCS mission is already running.
     send_dcs_reset_command();
 }
 
 bool DcsInterface::connection_settings_match(const DcsConnectionSettings &settings) {
     return ((settings.rx_port == connection_settings_.rx_port) && (settings.tx_port == connection_settings_.tx_port) &&
-            (settings.ip_address == connection_settings_.ip_address));
+            (settings.ip_address == connection_settings_.ip_address) &&
+            (settings.ip_address_partner == connection_settings_.ip_address_partner));
 }
 
 void DcsInterface::update_dcs_state() {

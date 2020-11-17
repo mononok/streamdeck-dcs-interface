@@ -6,25 +6,26 @@
 
 namespace test {
 
-TEST(DcsSocketTest, empty_connection_settings) { EXPECT_THROW(DcsSocket dcs_socket("", "", ""), std::runtime_error); }
+TEST(DcsSocketTest, empty_connection_settings) { EXPECT_THROW(DcsSocket dcs_socket("", "", "", ""), std::runtime_error); }
 
 TEST(DcsSocketTest, invalid_connection_port_settings) {
-    EXPECT_THROW(DcsSocket dcs_socket("127.0.0.1", "19ab", "abc"), std::runtime_error);
+    EXPECT_THROW(DcsSocket dcs_socket("127.0.0.1", "127.0.0.1", "19ab", "abc"), std::runtime_error);
 }
 
 TEST(DcsSocketTest, invalid_connection_ip_addr_settings) {
-    EXPECT_THROW(DcsSocket dcs_socket("127001", "1908", "1909"), std::runtime_error);
+    EXPECT_THROW(DcsSocket dcs_socket("127001", "127001", "1908", "1909"), std::runtime_error);
 }
 
 class DcsSocketTestFixture : public ::testing::Test {
   public:
     DcsSocketTestFixture()
-        : sender_socket(ip_address, "1788", common_port), receiver_socket(ip_address, common_port, "1790") {}
+        : sender_socket(ip_address, ip_address_partner, "1788", common_port), receiver_socket(ip_address, ip_address_partner, common_port, "1790") {}
 
     DcsSocket sender_socket;
     DcsSocket receiver_socket;
     static inline std::string common_port = "1789";
     static inline std::string ip_address = "127.0.0.1";
+    static inline std::string ip_address_partner = "127.0.0.1";
 };
 
 TEST_F(DcsSocketTestFixture, send_and_receive) {
@@ -36,7 +37,7 @@ TEST_F(DcsSocketTestFixture, send_and_receive) {
 
 TEST_F(DcsSocketTestFixture, unavailable_port_bind) {
     // Expect exception thrown if try to bind a new socket to same rx_port.
-    EXPECT_THROW(DcsSocket duplicate_socket(ip_address, common_port, "1801"), std::runtime_error);
+    EXPECT_THROW(DcsSocket duplicate_socket(ip_address, ip_address_partner, common_port, "1801"), std::runtime_error);
 }
 
 TEST_F(DcsSocketTestFixture, receive_timeout) {
@@ -47,8 +48,8 @@ TEST_F(DcsSocketTestFixture, receive_timeout) {
 
 TEST_F(DcsSocketTestFixture, dynamic_tx_port_discovery) {
     const std::string new_common_port = "1791";
-    DcsSocket server_socket(ip_address, "1792", new_common_port);
-    DcsSocket client_socket(ip_address, new_common_port);
+    DcsSocket server_socket(ip_address, ip_address_partner, "1792", new_common_port);
+    DcsSocket client_socket(ip_address, ip_address_partner, new_common_port);
     const std::string test_msg_a = "test_a";
     server_socket.DcsSend(test_msg_a);
     std::stringstream client_received_ss = client_socket.DcsReceive();

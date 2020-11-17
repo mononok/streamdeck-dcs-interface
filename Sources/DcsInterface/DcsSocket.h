@@ -16,7 +16,7 @@ class DcsSocket {
      * @param rx_port UDP receive port.
      * @param tx_port UDP transmit port, defaults to dynamic (use recvfrom address) if not provided.
      */
-    DcsSocket(const std::string &ip_address, const std::string &rx_port, const std::string &tx_port = "dynamic");
+    DcsSocket(const std::string &ip_address, const std::string &ip_address_partner, const std::string &rx_port, const std::string &tx_port = "dynamic");
 
     /**
      * @brief Destroy the Dcs Socket object

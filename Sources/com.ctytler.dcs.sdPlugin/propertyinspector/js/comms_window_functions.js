@@ -10,6 +10,7 @@ function loaded() {
 
 function callbackUpdateConnectionSettings() {
     window.opener.global_settings["ip_address"] = document.getElementById("ip_address").value;
+    window.opener.global_settings["ip_address_partner"] = document.getElementById("ip_address_partner").value;
     window.opener.global_settings["listener_port"] = document.getElementById("listener_port").value;
     window.opener.global_settings["send_port"] = document.getElementById("send_port").value;
     sendmessage("updateGlobalSettings", window.opener.global_settings);
@@ -22,6 +23,7 @@ function callbackUpdateConnectionSettings() {
  */
 function restoreGlobalSettings(settings) {
     document.getElementById("ip_address").value = settings.ip_address;
+    document.getElementById("ip_address_partner").value = settings.ip_address_partner;
     document.getElementById("listener_port").value = settings.listener_port;
     document.getElementById("send_port").value = settings.send_port;
     // Fields and button remain hidden until we've received settings from PI

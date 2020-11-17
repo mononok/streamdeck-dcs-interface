@@ -11,7 +11,8 @@
 using DcsConnectionSettings = struct {
     std::string rx_port;    // UDP port to receive updates from DCS.
     std::string tx_port;    // UDP port to send commands to DCS.
-    std::string ip_address; //  UDP IP address to send commands to DCS (Default is LocalHost).
+    std::string ip_address; //  UDP IP address to receive status from DCS (Default is LocalHost).
+    std::string ip_address_partner; //  UDP IP address to send commands to DCS (Default is LocalHost).
 };
 
 class DcsInterface {

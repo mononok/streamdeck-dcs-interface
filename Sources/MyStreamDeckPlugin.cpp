@@ -74,20 +74,23 @@ MyStreamDeckPlugin::~MyStreamDeckPlugin() {
 
 DcsConnectionSettings MyStreamDeckPlugin::get_connection_settings(const json &global_settings) {
     const std::string ip_address_request = EPLJSONUtils::GetStringByName(global_settings, "ip_address");
+    const std::string ip_address_partner = EPLJSONUtils::GetStringByName(global_settings, "ip_address_partner");
     const std::string listener_port_request = EPLJSONUtils::GetStringByName(global_settings, "listener_port");
     const std::string send_port_request = EPLJSONUtils::GetStringByName(global_settings, "send_port");
     const bool user_settings_valid =
-        (!ip_address_request.empty() && !listener_port_request.empty() && !send_port_request.empty());
+        (!ip_address_request.empty() && !ip_address_partner.empty() && !listener_port_request.empty() && !send_port_request.empty());
 
     DcsConnectionSettings connection_settings;
     if (user_settings_valid) {
         connection_settings.rx_port = listener_port_request;
         connection_settings.tx_port = send_port_request;
         connection_settings.ip_address = ip_address_request;
+        connection_settings.ip_address_partner = ip_address_partner;
     } else {
         connection_settings.rx_port = kDefaultDcsListenerPort;
         connection_settings.tx_port = kDefaultDcsSendPort;
         connection_settings.ip_address = kDefaultDcsIpAddress;
+        connection_settings.ip_address_partner = kDefaultDcsIpAddress;
     }
     return connection_settings;
 }

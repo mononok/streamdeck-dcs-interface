@@ -28,6 +28,9 @@ function addDefaultGlobalSettings(settings) {
     if (!settings.hasOwnProperty("ip_address")) {
         settings["ip_address"] = "127.0.0.1";
     }
+    if (!settings.hasOwnProperty("ip_address_partner")) {
+        settings["ip_address_partner"] = "127.0.0.1";
+    }
     if (!settings.hasOwnProperty("listener_port")) {
         settings["listener_port"] = "1725";
     }

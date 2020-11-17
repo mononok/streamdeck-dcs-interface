@@ -11,11 +11,11 @@
 // Set default timeout for socket.
 DWORD socket_timeout_ms = 100;
 
-DcsSocket::DcsSocket(const std::string &ip_address, const std::string &rx_port, const std::string &tx_port) {
+DcsSocket::DcsSocket(const std::string &ip_address, const std::string &ip_address_partner, const std::string &rx_port, const std::string &tx_port) {
     // Detect any missing input settings.
-    if (rx_port.empty() || tx_port.empty() || ip_address.empty()) {
+    if (rx_port.empty() || tx_port.empty() || ip_address.empty() || ip_address_partner.empty()) {
         const std::string error_msg =
-            "Missing values from requested IP: " + ip_address + " Rx_Port: " + rx_port + " Tx_Port: " + tx_port;
+            "Missing values from requested IP: " + ip_address + " Partner IP: " + ip_address_partner + " Rx_Port: " + rx_port + " Tx_Port: " + tx_port;
         throw std::runtime_error(error_msg);
     }
 
@@ -39,7 +39,7 @@ DcsSocket::DcsSocket(const std::string &ip_address, const std::string &rx_port, 
     addrinfo *local_port;
     const auto getaddr_result = getaddrinfo(ip_address.c_str(), rx_port.c_str(), &hints, &local_port);
     if (getaddr_result != 0) {
-        const std::string error_msg = "Could not get valid address info from requested IP: " + ip_address +
+        const std::string error_msg = "Could not get valid address info from requested IP: " + ip_address + " Partner IP: " + ip_address_partner +
                                       " Rx_Port: " + rx_port + " Tx_Port: " + tx_port +
                                       " -- WSA Error: " + std::to_string(WSAGetLastError());
         WSACleanup();
@@ -63,7 +63,7 @@ DcsSocket::DcsSocket(const std::string &ip_address, const std::string &rx_port, 
     if (tx_port != "dynamic") {
         // Define send destination port.
         addrinfo *send_to_port;
-        getaddrinfo(ip_address.c_str(), tx_port.c_str(), &hints, &send_to_port);
+        getaddrinfo(ip_address.c_str(), ip_address_partner.c_str(), tx_port.c_str(), &hints, &send_to_port);
         dest_addr_ = *send_to_port->ai_addr;
         dest_addr_len_ = static_cast<int>(send_to_port->ai_addrlen);
         freeaddrinfo(send_to_port);
