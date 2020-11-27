@@ -63,6 +63,18 @@ function addDefaultSettings(action, settings) {
             settings["send_when_second_state_value"] = "-1";
         }
     }
+    else if (action.includes("3states")) {
+    	document.getElementById("3states_button_settings").hiddlen = false;
+    	if (!settings.hasOwnProperty("send_when_first_state_value")) {
+    		settings["send_when_first_state_value"] = "1";
+    	}
+        if (!settings.hasOwnProperty("send_when_second_state_value")) {
+            settings["send_when_second_state_value"] = "0";
+        }
+        if (!settings.hasOwnProperty("send_when_holding_down_state_value")) {
+            settings["send_when_holding_down_state_value"] = "-1";
+        }
+    }
     else if (action.includes("increment")) {
         document.getElementById("increment_button_settings").hidden = false;
         if (!settings.hasOwnProperty("increment_value")) {
