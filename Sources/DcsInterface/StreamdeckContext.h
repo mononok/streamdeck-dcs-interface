@@ -15,6 +15,8 @@
 
 using KeyEvent = enum { KEY_DOWN, KEY_UP };
 
+class HoldingDownTimer ;
+
 class StreamdeckContext {
   public:
     StreamdeckContext() = default;
@@ -101,6 +103,14 @@ class StreamdeckContext {
                                      const json &settings,
                                      std::string &value);
     bool determineSendValueForIncrement(const KeyEvent event, const json &settings, std::string &value);
+    bool determineSendValueFor3States(const KeyEvent event,
+                                                    const ContextState state,
+                                                    const json &settings,
+                                                    std::string &value,
+                                                    const std::string &button_id,
+                                                    const std::string &device_id,
+                                                    DcsInterface *dcs_interface );
+    void HoldingDownOccure( void );
 
     std::string context_; // Unique context ID used by Streamdeck to refer to instances of buttons.
 
@@ -130,4 +140,10 @@ class StreamdeckContext {
     bool string_monitor_passthrough_ = true;  // Flag set by user to passthrough string to title unaltered.
     std::map<std::string, std::string>
         string_monitor_mapping_; // Map of received values to title text to display on context.
+
+    HoldingDownTimer *HoldingDownTimer_ = nullptr;
+    DcsInterface    *HoldingDownDcsInterface_;
+    std::string     HoldingDownValue_;
+    std::string     HoldingDownButton_id;
+    std::string     HoldingDownDevice_id;
 };

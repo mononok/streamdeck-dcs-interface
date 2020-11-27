@@ -17,7 +17,21 @@
 #include "Common/ESDConnectionManager.h"
 #include "DcsInterface/DcsIdLookup.h"
 #include "DcsInterface/DcsInterfaceParameters.h"
-
+/****************************************************************************/
+/*                                                                          */
+/*                                                                          */
+/*                                                                          */
+/****************************************************************************/
+/*****************************************************************************
+** FUNCTION :
+** PARAMETER:                       :                                   (IO)
+** RETURN   : エラーコード
+** AUTHOR   : korimnnk9@gmail.com
+** CREATE   : 2020/11/27
+** UPDATE   :     /  /
+**----------------------------------------------------------------------------
+** COMMENT  :
+*****************************************************************************/
 class CallBackTimer {
   public:
     CallBackTimer() : _execute(false) {}
@@ -53,12 +67,34 @@ class CallBackTimer {
     std::atomic<bool> _execute;
     std::thread _thd;
 };
-
+/*----------------------------------------------------------------------------
+**
+**
+**
+*/
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/*                                                                          */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+/******************************************************************************
+ *      Function    :
+ *      Description : コンストラクター
+ *      Parameter   :                       :
+ *      Return val  :
+ *      Notes       :
+ */
 MyStreamDeckPlugin::MyStreamDeckPlugin() {
     mTimer = new CallBackTimer();
     mTimer->start(10, [this]() { this->UpdateFromGameState(); });
 }
-
+/******************************************************************************
+ *      Function    :
+ *      Description : デコンストラクター
+ *      Parameter   :                       :
+ *      Return val  :
+ *      Notes       :
+ */
 MyStreamDeckPlugin::~MyStreamDeckPlugin() {
     if (mTimer != nullptr) {
         mTimer->stop();
@@ -71,7 +107,13 @@ MyStreamDeckPlugin::~MyStreamDeckPlugin() {
         dcs_interface_ = nullptr;
     }
 }
-
+/******************************************************************************
+ *      Function    : get_connection_settings
+ *      Description :
+ *      Parameter   : global_settings       :
+ *      Return val  :
+ *      Notes       :
+ */
 DcsConnectionSettings MyStreamDeckPlugin::get_connection_settings(const json &global_settings) {
     const std::string ip_address_request = EPLJSONUtils::GetStringByName(global_settings, "ip_address");
     const std::string ip_address_partner = EPLJSONUtils::GetStringByName(global_settings, "ip_address_partner");
@@ -94,7 +136,13 @@ DcsConnectionSettings MyStreamDeckPlugin::get_connection_settings(const json &gl
     }
     return connection_settings;
 }
-
+/******************************************************************************
+ *      Function    : DidReceiveGlobalSettings (規定)
+ *      Description : getGlobalSettings()後のデータ受け取りコールバック関数
+ *      Parameter   : inPayload             :
+ *      Return val  : なし
+ *      Notes       : ※ 関数はユーザー定義する
+ */
 void MyStreamDeckPlugin::DidReceiveGlobalSettings(const json &inPayload) {
     json settings;
     EPLJSONUtils::GetObjectByName(inPayload, "settings", settings);
@@ -116,7 +164,13 @@ void MyStreamDeckPlugin::DidReceiveGlobalSettings(const json &inPayload) {
         }
     }
 }
-
+/******************************************************************************
+ *      Function    : UpdateFromGameState
+ *      Description : タイマーより呼び出しあり
+ *      Parameter   : なし
+ *      Return val  : なし
+ *      Notes       :
+ */
 void MyStreamDeckPlugin::UpdateFromGameState() {
     //
     // Warning: UpdateFromGameState() is running in the timer thread
@@ -135,7 +189,16 @@ void MyStreamDeckPlugin::UpdateFromGameState() {
         }
     }
 }
-
+/******************************************************************************
+ *      Function    : KeyDownForAction (規定)
+ *      Description : キーが押された
+ *      Parameter   : inAction              :
+ *                  : inContext             :
+ *                  : inPayload             :
+ *                  : inDeviceID            :
+ *      Return val  : なし
+ *      Notes       :
+ */
 void MyStreamDeckPlugin::KeyDownForAction(const std::string &inAction,
                                           const std::string &inContext,
                                           const json &inPayload,
@@ -146,7 +209,16 @@ void MyStreamDeckPlugin::KeyDownForAction(const std::string &inAction,
         mVisibleContextsMutex.unlock();
     }
 }
-
+/******************************************************************************
+ *      Function    : KeyUpForAction (規定)
+ *      Description : キーが離された
+ *      Parameter   : inAction              :
+ *                  : inContext             :
+ *                  : inPayload             :
+ *                  : inDeviceID            :
+ *      Return val  : なし
+ *      Notes       :
+ */
 void MyStreamDeckPlugin::KeyUpForAction(const std::string &inAction,
                                         const std::string &inContext,
                                         const json &inPayload,
@@ -167,7 +239,16 @@ void MyStreamDeckPlugin::KeyUpForAction(const std::string &inAction,
         mVisibleContextsMutex.unlock();
     }
 }
-
+/******************************************************************************
+ *      Function    : WillAppearForAction (規定)
+ *      Description : インスタンスがStreamDeckに表示された
+ *      Parameter   : inAction              :
+ *                  : inContext             :
+ *                  : inPayload             :
+ *                  : inDeviceID            :
+ *      Return val  : なし
+ *      Notes       :
+ */
 void MyStreamDeckPlugin::WillAppearForAction(const std::string &inAction,
                                              const std::string &inContext,
                                              const json &inPayload,
@@ -182,7 +263,16 @@ void MyStreamDeckPlugin::WillAppearForAction(const std::string &inAction,
     }
     mVisibleContextsMutex.unlock();
 }
-
+/******************************************************************************
+ *      Function    : WillDisappearForAction (規定)
+ *      Description : インスタンスがStreamDeckから削除された
+ *      Parameter   : inAction              :
+ *                  : inContext             :
+ *                  : inPayload             :
+ *                  : inDeviceID            :
+ *      Return val  : なし
+ *      Notes       :
+ */
 void MyStreamDeckPlugin::WillDisappearForAction(const std::string &inAction,
                                                 const std::string &inContext,
                                                 const json &inPayload,
@@ -192,18 +282,40 @@ void MyStreamDeckPlugin::WillDisappearForAction(const std::string &inAction,
     mVisibleContexts.erase(inContext);
     mVisibleContextsMutex.unlock();
 }
-
+/******************************************************************************
+ *      Function    : DeviceDidConnect (規定)
+ *      Description : PCにデバイスを接続した。
+ *      Parameter   : inDeviceID            :
+ *                  : inDeviceInfo          :
+ *      Return val  : なし
+ *      Notes       :
+ */
 void MyStreamDeckPlugin::DeviceDidConnect(const std::string &inDeviceID, const json &inDeviceInfo) {
     // Request global settings from Streamdeck.
     if (mConnectionManager != nullptr) {
         mConnectionManager->GetGlobalSettings();
     }
 }
-
+/******************************************************************************
+ *      Function    : DeviceDidDisconnect (規定)
+ *      Description : PCからデバイスを削除した
+ *      Parameter   : inDeviceID            :
+ *      Return val  : なし
+ *      Notes       :
+ */
 void MyStreamDeckPlugin::DeviceDidDisconnect(const std::string &inDeviceID) {
     // Nothing to do.
 }
-
+/******************************************************************************
+ *      Function    : SendToPlugin (規定)
+ *      Description : PropertyInspectorからのsendToPluginイベント処理
+ *      Parameter   : inAction              :
+ *                  : inContext             :
+ *                  : inPayload             :
+ *                  : inDeviceID            :
+ *      Return val  : なし
+ *      Notes       :
+ */
 void MyStreamDeckPlugin::SendToPlugin(const std::string &inAction,
                                       const std::string &inContext,
                                       const json &inPayload,

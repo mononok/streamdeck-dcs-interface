@@ -6,6 +6,48 @@
 
 #include "../Common/EPLJSONUtils.h"
 
+class HoldingDownTimer {
+  public:
+    HoldingDownTimer() : _execute(false) {}
+
+    ~HoldingDownTimer() {
+        if (_execute.load(std::memory_order_acquire)) {
+            stop();
+        };
+    }
+
+    void stop() {
+        _execute.store(false, std::memory_order_release);
+        if (_thd.joinable())
+            _thd.join();
+    }
+
+    void start(int interval, std::function<void(void)> func) {
+        if (_execute.load(std::memory_order_acquire)) {
+            stop();
+        };
+        _timeout = false;
+        _execute.store(true, std::memory_order_release);
+        _thd = std::thread([this, interval, func]() {
+            std::this_thread::sleep_for(std::chrono::milliseconds(interval));
+            if (_execute.load(std::memory_order_acquire)) {
+                func();
+                _timeout = true;
+            }
+        });
+    }
+
+    bool is_running() const noexcept { return (_execute.load(std::memory_order_acquire) && _thd.joinable()); }
+
+    bool    is_timeout() { return( _timeout ); }
+
+  private:
+    std::atomic<bool> _execute;
+    std::thread _thd;
+    int         _timeout = false;
+};
+
+
 StreamdeckContext::StreamdeckContext(const std::string &context) { context_ = context; }
 
 StreamdeckContext::StreamdeckContext(const std::string &context, const json &settings) {
@@ -136,6 +178,9 @@ void StreamdeckContext::handleButtonEvent(DcsInterface *dcs_interface,
         if (action.find("switch") != std::string::npos) {
             const ContextState state = EPLJSONUtils::GetIntByName(inPayload, "state") == 0 ? FIRST : SECOND;
             send_command = determineSendValueForSwitch(event, state, inPayload["settings"], value);
+        } else if (action.find("3states") != std::string::npos) {
+            const ContextState state = EPLJSONUtils::GetIntByName(inPayload, "state") == 0 ? FIRST : SECOND;
+            send_command = determineSendValueFor3States(event, state, inPayload["settings"], value, button_id, device_id, dcs_interface );
         } else if (action.find("increment") != std::string::npos) {
             send_command = determineSendValueForIncrement(event, inPayload["settings"], value);
         } else {
@@ -216,6 +261,45 @@ bool StreamdeckContext::determineSendValueForSwitch(const KeyEvent event,
     return false;
 }
 
+bool StreamdeckContext::determineSendValueFor3States(const KeyEvent event,
+                                                    const ContextState state,
+                                                    const json &settings,
+                                                    std::string &value,
+                                                    const std::string &button_id,
+                                                    const std::string &device_id,
+                                                    DcsInterface *dcs_interface ) {
+    if (event == KEY_DOWN ) {
+        if( HoldingDownTimer_ == nullptr ) {
+            HoldingDownButton_id = button_id;
+            HoldingDownDevice_id = device_id;
+            HoldingDownDcsInterface_ = dcs_interface;
+            HoldingDownValue_ = EPLJSONUtils::GetStringByName(settings, "send_when_holding_down_state_value");
+            HoldingDownTimer_ = new HoldingDownTimer();
+            HoldingDownTimer_->start( 1500, [this]() { this->HoldingDownOccure();});
+        }
+    }
+    else if (event == KEY_UP) {
+        if( HoldingDownTimer_ != nullptr ) {
+            HoldingDownTimer_->stop();
+            if( !HoldingDownTimer_->is_timeout() ) {
+                if (state == FIRST) {
+                    value = EPLJSONUtils::GetStringByName(settings, "send_when_first_state_value");
+                } else {
+                    value = EPLJSONUtils::GetStringByName(settings, "send_when_second_state_value");
+                }
+            }
+            delete HoldingDownTimer_;
+            HoldingDownTimer_ = nullptr;
+        }
+
+        if (!value.empty()) {
+            return true;
+        }
+    }
+    // Switch type only needs to send command on key down.
+    return false;
+}
+
 bool StreamdeckContext::determineSendValueForIncrement(const KeyEvent event, const json &settings, std::string &value) {
     if (event == KEY_DOWN) {
         const std::string increment_value_str = EPLJSONUtils::GetStringByName(settings, "increment_value");
@@ -240,3 +324,14 @@ bool StreamdeckContext::determineSendValueForIncrement(const KeyEvent event, con
     // Increment type only needs to send command on key down.
     return false;
 }
+
+void StreamdeckContext::HoldingDownOccure( void ) {
+
+    if (!HoldingDownValue_.empty()) {
+        HoldingDownDcsInterface_->send_dcs_command(std::stoi(HoldingDownButton_id), HoldingDownDevice_id, HoldingDownValue_);
+    }
+}
+
+
+
+
