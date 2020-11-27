@@ -26,8 +26,8 @@
 ** FUNCTION :
 ** PARAMETER:                       :                                   (IO)
 ** RETURN   : エラーコード
-** AUTHOR   : Yoshiharu Oba (Justec)
-** CREATE   : 2020/  /
+** AUTHOR   : korimnnk9@gmail.com
+** CREATE   : 2020/11/27
 ** UPDATE   :     /  /
 **----------------------------------------------------------------------------
 ** COMMENT  :

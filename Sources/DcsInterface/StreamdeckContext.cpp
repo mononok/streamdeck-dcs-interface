@@ -180,7 +180,7 @@ void StreamdeckContext::handleButtonEvent(DcsInterface *dcs_interface,
             send_command = determineSendValueForSwitch(event, state, inPayload["settings"], value);
         } else if (action.find("3states") != std::string::npos) {
             const ContextState state = EPLJSONUtils::GetIntByName(inPayload, "state") == 0 ? FIRST : SECOND;
-            send_command = determineSendValueFor3States(event, state, inPayload["settings"], value, button_id, device_id );
+            send_command = determineSendValueFor3States(event, state, inPayload["settings"], value, button_id, device_id, dcs_interface );
         } else if (action.find("increment") != std::string::npos) {
             send_command = determineSendValueForIncrement(event, inPayload["settings"], value);
         } else {
@@ -265,12 +265,14 @@ bool StreamdeckContext::determineSendValueFor3States(const KeyEvent event,
                                                     const ContextState state,
                                                     const json &settings,
                                                     std::string &value,
-                                                    std::string &button_id,
-                                                    std::string &device_id ) {
+                                                    const std::string &button_id,
+                                                    const std::string &device_id,
+                                                    DcsInterface *dcs_interface ) {
     if (event == KEY_DOWN ) {
         if( HoldingDownTimer_ == nullptr ) {
             HoldingDownButton_id = button_id;
             HoldingDownDevice_id = device_id;
+            HoldingDownDcsInterface_ = dcs_interface;
             HoldingDownValue_ = EPLJSONUtils::GetStringByName(settings, "send_when_holding_down_state_value");
             HoldingDownTimer_ = new HoldingDownTimer();
             HoldingDownTimer_->start( 1500, [this]() { this->HoldingDownOccure();});
@@ -326,7 +328,7 @@ bool StreamdeckContext::determineSendValueForIncrement(const KeyEvent event, con
 void StreamdeckContext::HoldingDownOccure( void ) {
 
     if (!HoldingDownValue_.empty()) {
-        dcs_interface->send_dcs_command(std::stoi(HoldingDownButton_id), HoldingDownDevice_id, HoldingDownValue_);
+        HoldingDownDcsInterface_->send_dcs_command(std::stoi(HoldingDownButton_id), HoldingDownDevice_id, HoldingDownValue_);
     }
 }
 

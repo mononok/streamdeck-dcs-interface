@@ -107,8 +107,9 @@ class StreamdeckContext {
                                                     const ContextState state,
                                                     const json &settings,
                                                     std::string &value,
-                                                    std::string &button_id,
-                                                    std::string &device_id );
+                                                    const std::string &button_id,
+                                                    const std::string &device_id,
+                                                    DcsInterface *dcs_interface );
     void HoldingDownOccure( void );
 
     std::string context_; // Unique context ID used by Streamdeck to refer to instances of buttons.
@@ -141,7 +142,8 @@ class StreamdeckContext {
         string_monitor_mapping_; // Map of received values to title text to display on context.
 
     HoldingDownTimer *HoldingDownTimer_ = nullptr;
-    std::string     HoldingDownValue_ = -1;
+    DcsInterface    *HoldingDownDcsInterface_;
+    std::string     HoldingDownValue_;
     std::string     HoldingDownButton_id;
     std::string     HoldingDownDevice_id;
 };
