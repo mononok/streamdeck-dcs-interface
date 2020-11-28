@@ -22,19 +22,12 @@
       "UUID": "com.ctytler.dcs.up-down.switch.two-state",
       "ShowTitle": false
     },
-
     {
       "Icon": "images/Chrome_Switch_Low",
-      "Name": "3State Switch Input",
+      "Name": "3states Input",
       "States": [
         {
           "Image": "images/Chrome_Switch_Low",
-          "TitleAlignment": "middle",
-          "FontFamily": "Default",
-          "FontSize": "17"
-        },
-        {
-          "Image": "images/Chrome_Switch_Middle",
           "TitleAlignment": "middle",
           "FontFamily": "Default",
           "FontSize": "17"
@@ -44,14 +37,19 @@
           "TitleAlignment": "middle",
           "FontFamily": "Default",
           "FontSize": "17"
+        },
+        {
+          "Image": "images/Chrome_Switch_Mid",
+          "TitleAlignment": "middle",
+          "FontFamily": "Default",
+          "FontSize": "17"
         }
       ],
       "SupportedInMultiActions": false,
       "Tooltip": "Button press depends on displayed state and support holding down a button",
-      "UUID": "com.ctytler.dcs.up-down.switch.three-state",
+      "UUID": "com.ctytler.dcs.up-down.3states.three-state",
       "ShowTitle": false
     },
-
     {
       "Icon": "images/button_light_on",
       "Name": "Momentary Button with Lamp",

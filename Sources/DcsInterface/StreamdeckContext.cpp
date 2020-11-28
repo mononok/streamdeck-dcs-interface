@@ -35,6 +35,7 @@ class HoldingDownTimer {
                 _timeout = true;
             }
         });
+        _thd.detach();
     }
 
     bool is_running() const noexcept { return (_execute.load(std::memory_order_acquire) && _thd.joinable()); }
@@ -50,7 +51,8 @@ class HoldingDownTimer {
 
 StreamdeckContext::StreamdeckContext(const std::string &context) { context_ = context; }
 
-StreamdeckContext::StreamdeckContext(const std::string &context, const json &settings) {
+StreamdeckContext::StreamdeckContext(const std::string &context, const json &settings, ESDConnectionManager *mConnectionManager) {
+    mConnectionManager_ = mConnectionManager;
     context_ = context;
     updateContextSettings(settings);
 }
@@ -179,7 +181,8 @@ void StreamdeckContext::handleButtonEvent(DcsInterface *dcs_interface,
             const ContextState state = EPLJSONUtils::GetIntByName(inPayload, "state") == 0 ? FIRST : SECOND;
             send_command = determineSendValueForSwitch(event, state, inPayload["settings"], value);
         } else if (action.find("3states") != std::string::npos) {
-            const ContextState state = EPLJSONUtils::GetIntByName(inPayload, "state") == 0 ? FIRST : SECOND;
+            int     iState = EPLJSONUtils::GetIntByName(inPayload, "state");
+            const ContextState state = ( iState == 0 ? FIRST : ( iState == 1 ? SECOND : THIRD ));
             send_command = determineSendValueFor3States(event, state, inPayload["settings"], value, button_id, device_id, dcs_interface );
         } else if (action.find("increment") != std::string::npos) {
             send_command = determineSendValueForIncrement(event, inPayload["settings"], value);
@@ -195,19 +198,48 @@ void StreamdeckContext::handleButtonEvent(DcsInterface *dcs_interface,
 
 StreamdeckContext::ContextState StreamdeckContext::determineStateForCompareMonitor(const Decimal &current_game_value) {
     bool set_context_state_to_second = false;
+    StreamdeckContext::ContextState     eState;
+
     switch (dcs_id_compare_condition_) {
     case EQUAL_TO:
         set_context_state_to_second = (current_game_value == dcs_id_comparison_value_);
+        if( set_context_state_to_second ) {
+            eState = SECOND;
+        } else {
+            if( dcs_id_comparison_value_ == Decimal("0") ) {
+                eState = ( current_game_value >  Decimal("0") ? FIRST : THIRD );
+            } else {
+                eState = ( current_game_value == Decimal("0") ? FIRST : THIRD );
+            }
+        }
         break;
     case LESS_THAN:
         set_context_state_to_second = (current_game_value < dcs_id_comparison_value_);
+        if( set_context_state_to_second ) {
+            eState = SECOND;
+        } else {
+            if( dcs_id_comparison_value_ <= Decimal("0") ) {
+                eState = ( current_game_value == Decimal("0") ? THIRD : FIRST );
+            } else {
+                eState = FIRST;
+            }
+        }
         break;
     case GREATER_THAN:
         set_context_state_to_second = (current_game_value > dcs_id_comparison_value_);
+        if( set_context_state_to_second ) {
+            eState = SECOND;
+        } else {
+            if( dcs_id_comparison_value_ >= Decimal("0") ) {
+                eState = ( current_game_value == Decimal("0") ? THIRD : FIRST );
+            } else {
+                eState = FIRST;
+            }
+        }
         break;
     }
 
-    return set_context_state_to_second ? SECOND : FIRST;
+    return eState;
 }
 
 std::string StreamdeckContext::determineTitleForStringMonitor(const std::string &current_game_string_value) {
@@ -275,7 +307,7 @@ bool StreamdeckContext::determineSendValueFor3States(const KeyEvent event,
             HoldingDownDcsInterface_ = dcs_interface;
             HoldingDownValue_ = EPLJSONUtils::GetStringByName(settings, "send_when_holding_down_state_value");
             HoldingDownTimer_ = new HoldingDownTimer();
-            HoldingDownTimer_->start( 1500, [this]() { this->HoldingDownOccure();});
+            HoldingDownTimer_->start( 1000, [this]() { this->HoldingDownOccure();});
         }
     }
     else if (event == KEY_UP) {
@@ -326,12 +358,7 @@ bool StreamdeckContext::determineSendValueForIncrement(const KeyEvent event, con
 }
 
 void StreamdeckContext::HoldingDownOccure( void ) {
-
     if (!HoldingDownValue_.empty()) {
         HoldingDownDcsInterface_->send_dcs_command(std::stoi(HoldingDownButton_id), HoldingDownDevice_id, HoldingDownValue_);
     }
 }
-
-
-
-

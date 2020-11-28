@@ -228,7 +228,8 @@ void MyStreamDeckPlugin::KeyUpForAction(const std::string &inAction,
         mVisibleContextsMutex.lock();
         // The Streamdeck will by default change a context's state after a KeyUp event, so a force send of the current
         // context's state will keep the button state in sync with the plugin.
-        if (inAction.find("switch") != std::string::npos) {
+        if (inAction.find("switch") != std::string::npos ||
+             inAction.find("3states") != std::string::npos ) {
             // For switches use a delay to avoid jittering and a race condition of Streamdeck and Plugin trying to
             // change state.
             mVisibleContexts[inContext].forceSendStateAfterDelay(3);
@@ -257,7 +258,7 @@ void MyStreamDeckPlugin::WillAppearForAction(const std::string &inAction,
     mVisibleContextsMutex.lock();
     json settings;
     EPLJSONUtils::GetObjectByName(inPayload, "settings", settings);
-    mVisibleContexts[inContext] = StreamdeckContext(inContext, settings);
+    mVisibleContexts[inContext] = StreamdeckContext(inContext, settings, mConnectionManager);
     if (dcs_interface_ != nullptr) {
         mVisibleContexts[inContext].forceSendState(mConnectionManager);
     }
@@ -321,6 +322,7 @@ void MyStreamDeckPlugin::SendToPlugin(const std::string &inAction,
                                       const json &inPayload,
                                       const std::string &inDeviceID) {
     const std::string event = EPLJSONUtils::GetStringByName(inPayload, "event");
+
 
     if (event == "SettingsUpdate") {
         // Update settings for the specified context -- triggered by Property Inspector detecting a change.

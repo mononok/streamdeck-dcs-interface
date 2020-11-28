@@ -3,7 +3,7 @@
 /**
  * The global variable "global_settings" stores in memory settings which should be constant for all Streamdeck button
  * contexts, set via the external windows.
- * 
+ *
  * This also includes ease-of-use values such as "last selected module" so users don't have to reselect the same module
  * for each button.
  */
@@ -12,7 +12,7 @@ var global_settings;
 /**
  * This function is called any time global settings are changed or requested.
  * Upon device connection, the global settings are requested from "index_pi.js".
- * 
+ *
  * @param global_settings Received global settings from Streamdeck program.
  */
 function callbackReceivedGlobalSettings(stored_global_settings) {
@@ -64,7 +64,8 @@ function addDefaultSettings(action, settings) {
         }
     }
     else if (action.includes("3states")) {
-    	document.getElementById("3states_button_settings").hiddlen = false;
+        document.getElementById("switch_button_settings").hidden = false;
+    	document.getElementById("3states_button_settings").hidden = false;
     	if (!settings.hasOwnProperty("send_when_first_state_value")) {
     		settings["send_when_first_state_value"] = "1";
     	}

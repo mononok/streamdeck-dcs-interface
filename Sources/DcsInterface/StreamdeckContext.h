@@ -21,7 +21,7 @@ class StreamdeckContext {
   public:
     StreamdeckContext() = default;
     StreamdeckContext(const std::string &context);
-    StreamdeckContext(const std::string &context, const json &settings);
+    StreamdeckContext(const std::string &context, const json &settings, ESDConnectionManager *mConnectionManager);
 
     /**
      * @brief Queries the dcs_interface for updates to the Context's monitored DCS IDs.
@@ -69,7 +69,7 @@ class StreamdeckContext {
 
   private:
     using CompareConditionType = enum { GREATER_THAN, EQUAL_TO, LESS_THAN };
-    using ContextState = enum { FIRST = 0, SECOND };
+    using ContextState = enum { FIRST = 0, SECOND, THIRD };
 
     /**
      * @brief Determines what the context state should be according to current game value and comparison monitor
@@ -146,4 +146,6 @@ class StreamdeckContext {
     std::string     HoldingDownValue_;
     std::string     HoldingDownButton_id;
     std::string     HoldingDownDevice_id;
+
+	ESDConnectionManager *mConnectionManager_ = nullptr;
 };
