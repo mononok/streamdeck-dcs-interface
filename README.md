@@ -96,11 +96,11 @@ The Sources folder contains the source code of the plugin. The primary component
 - `Sources/com.ctytler.dcs.sdPlugin/proprtyinspector` - Contains html and javascript for handling user settings
 - `Sources/com.ctytler.dcs.sdPlugin/manifest.json` - Configuration for the Stream Deck plugin
 
-# Build from source instructions
+# ビルド
 
-A build script is included which will build both the C++ executable which handles the communcation with DCS as well as the package for the Stream Deck plugin: `build_plugin.bat`
+DCSとの通信を処理するC++実行ファイルと、Stream Deckプラグインのパッケージの両方をビルドするビルドスクリプトが含まれています： build_plugin.bat
 
-You must call this file from the [Developer Command Prompt for VS](https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs) in order for the Visual C++ target build step to work.
+Visual C++ターゲットのビルドステップを実行するためには、VSのDeveloper Command Promptからこのファイルを呼び出す必要があります。
+[Developer Command Prompt for VS](https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs)
 
-You may also need to install the Boost C++ library as it is used by the base Streamdeck SDK.
-Current version was built with Visual Studio Community 2019 and Boost 1.55.0.
+また、Streamdeck SDKで使用されているBoost C++ライブラリをインストールする必要があるかもしれません。現在のバージョンは、Visual Studio Community 2019とBoost 1.55.0でビルドされています。
