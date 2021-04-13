@@ -12,7 +12,7 @@ lua UDPソケットを通して DCSからシミュレーション情報を受け
     - [初期設定](#初期設定)
     - [ビデオ映像による説明](#ビデオ映像による説明)
 - [ソースコード](#ソースコード)
-- [Build from source instructions](#build-from-source-instructions)
+- [ビルド](#ビルド)
 
 # 概要
 
