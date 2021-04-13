@@ -77,7 +77,8 @@ ExportScript.Config.IkarusPort      = 1725         -- Port Ikarus (1625)
 ExportScript.Config.IkarusSeparator = ":"
 ```
 
-The export script is also capable of supporting both, instructions can be found in the [Settings Help Documentation - Enabling Both DCS Interface & Ikarus](Sources/com.ctytler.dcs.sdPlugin/helpDocs/helpContents.md#enabling-both-dcs-interface--ikarus).
+エクスポートスクリプトは、両方をサポートすることができます。その方法は、「設定ヘルプ・ドキュメント - DCSインターフェースとIkarusの両方を有効にする」に記載されています。
+[Settings Help Documentation - Enabling Both DCS Interface & Ikarus](Sources/com.ctytler.dcs.sdPlugin/helpDocs/helpContents.md#enabling-both-dcs-interface--ikarus).
 
 ### ビデオ映像による説明
 
